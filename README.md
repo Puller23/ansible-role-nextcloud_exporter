@@ -1,6 +1,8 @@
 Ansible Role: nextcloud exporter
 =========
 
+[![CI](https://github.com/Puller23/ansible-role-nextcloud_exporter/actions/workflows/ci.yml/badge.svg)](https://github.com/Puller23/ansible-role-nextcloud_exporter/actions/workflows/ci.yml)
+
 Deploy prometheus [nextcloud exporter](https://github.com/xperimental/nextcloud-exporter) using ansible.
 
 Requirements
