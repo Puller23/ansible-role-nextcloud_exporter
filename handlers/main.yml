@@ -1,0 +1,5 @@
+---
+- name: restart nextcloud_exporter
+  systemd:
+    name: nextcloud_exporter
+    state: restarted

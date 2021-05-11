@@ -1,0 +1,14 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  roles:
+    - role: puller23.nextcloud_exporter
+
+  post_tasks:
+    - name: Check if nextcloud_exporter is running.
+      wait_for:
+        host: 127.0.0.1
+        port: 9205
+        delay: 0
+        timeout: 3

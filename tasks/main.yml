@@ -1,0 +1,29 @@
+---
+# Check current preps
+- import_tasks: preflight.yml
+  tags:
+    - always
+
+# Set Parameters
+- name: Define nextcloud_exporter_system_user
+  set_fact:
+    nextcloud_exporter_system_user: "{{ _nextcloud_exporter_system_user }}"
+  when: nextcloud_exporter_system_user is not defined
+
+- name: Define nextcloud_exporter_system_group
+  set_fact:
+    nextcloud_exporter_system_group: "{{ _nextcloud_exporter_system_group }}"
+  when: nextcloud_exporter_system_group is not defined
+
+
+# Install nextcloud_exporter
+- import_tasks: install.yml
+  become: true
+  when:
+    ( not _nextcloud_exporter_is_installed.stat.exists ) or 
+    ( nextcloud_exporter_install_dir | length > 0 )
+
+- import_tasks: configure.yml
+  become: true
+  tags:
+    - nextcloud_exporter_configure

@@ -1,0 +1,36 @@
+---
+- name: Copy the nextcloud_exporter systemd service file
+  template:
+    src: nextcloud_exporter.service.j2
+    dest: /etc/systemd/system/nextcloud_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart nextcloud_exporter
+
+- block:
+    - name: Create nextcloud_exporter config dir
+      file:
+        path: "{{ nextcloud_exporter_config_dir }}"
+        state: directory
+        owner: "{{ nextcloud_exporter_system_user }}"
+        group: "{{ nextcloud_exporter_system_group }}"
+        mode: 0744
+      notify: restart nextcloud_exporter
+
+    - name: Copy the nextcloud_exporter config file
+      template:
+        src: "{{ nextcloud_exporter_config_template }}"
+        dest: "{{ nextcloud_exporter_config_dir }}/{{ nextcloud_exporter_config_file }}"
+        owner: "{{ nextcloud_exporter_system_user }}"
+        group: "{{ nextcloud_exporter_system_group }}"
+        mode: 0644
+      notify: restart nextcloud_exporter
+
+- name: Ensure nextcloud_exporter is enabled on boot
+  become: true
+  systemd:
+    daemon_reload: true
+    name: nextcloud_exporter
+    enabled: true
+    state: started

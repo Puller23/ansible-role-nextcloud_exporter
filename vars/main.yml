@@ -1,0 +1,14 @@
+---
+sys_architecture_map:
+  i386: '386'
+  x86_64: 'amd64'
+  aarch64: 'arm64'
+  armv7l: 'armv7'
+  armv6l: 'armv6'
+
+go_architecture: "{{ sys_architecture_map[ansible_architecture] | default(ansible_architecture) }}"
+
+_nextcloud_exporter_binary_install_dir: "/usr/local/bin"
+_nextcloud_exporter_binary: "{{ _nextcloud_exporter_binary_install_dir }}/nextcloud_exporter"
+_nextcloud_exporter_system_group: "nextcloud_exp"
+_nextcloud_exporter_system_user: "{{ _nextcloud_exporter_system_group }}"

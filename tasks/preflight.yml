@@ -1,0 +1,11 @@
+---
+- name: Assert the usage of systemd
+  assert:
+    that: ansible_service_mgr == 'systemd'
+    msg: "This role only works with systemd"
+
+- name: Check if nextcloud_exporter is installed
+  stat:
+    path: "{{ _nextcloud_exporter_binary }}"
+  register: _nextcloud_exporter_is_installed
+  check_mode: false

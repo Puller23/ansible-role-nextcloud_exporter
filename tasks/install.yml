@@ -1,0 +1,48 @@
+---
+- name: Create the nextcloud_exporter group
+  group:
+    name: "{{ nextcloud_exporter_system_group }}"
+    state: present
+    system: true
+  when: nextcloud_exporter_system_group != "root"
+
+- name: Create the nextcloud_exporter user
+  user:
+    name: "{{ nextcloud_exporter_system_user }}"
+    groups: "{{ nextcloud_exporter_system_group }}"
+    append: true
+    shell: /usr/sbin/nologin
+    create_home: false
+    home: /
+  when: nextcloud_exporter_system_user != "root"
+
+- block:
+    - name: Download nextcloud_exporter
+      become: false
+      get_url:
+        url: "{{ nextcloud_exporter_base_url }}/v{{ nextcloud_exporter_version }}/nextcloud-exporter-{{ nextcloud_exporter_version }}-{{ go_architecture }}.bz2"
+        dest: "/tmp/nextcloud_exporter-{{ nextcloud_exporter_version }}-{{ go_architecture }}.bz2"
+        mode: '0644'
+      register: _r_download_binary
+      until: _r_download_binary is succeeded
+      retries: 5
+      delay: 2
+      delegate_to: localhost
+
+    - name: Unarchive nextcloud_exporter
+      become: false
+      command: 
+        cmd: "bunzip2 /tmp/nextcloud_exporter-{{ nextcloud_exporter_version }}-{{ go_architecture }}.bz2"
+        creates: "/tmp/nextcloud_exporter-{{ nextcloud_exporter_version }}-{{ go_architecture }}"
+      args:
+        chdir: /tmp
+      delegate_to: localhost
+
+    - name: Propagate nextcloud_exporter
+      copy:
+        src: "/tmp/nextcloud_exporter-{{ nextcloud_exporter_version }}-{{ go_architecture }}"
+        dest: "{{ _nextcloud_exporter_binary }}"
+        mode: 0755
+        owner: root
+        group: root
+      

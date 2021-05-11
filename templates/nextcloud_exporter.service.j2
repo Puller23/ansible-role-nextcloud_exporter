@@ -1,0 +1,17 @@
+[Unit]
+Description=Prometheus exporter for Nextcloud metrics
+After=network.target nss-lookup.target
+
+[Service]
+Type=simple
+ExecStart={{ _nextcloud_exporter_binary }} -c {{ nextcloud_exporter_config_dir }}/{{ nextcloud_exporter_config_file }}
+User={{ nextcloud_exporter_system_user }}
+Group={{ nextcloud_exporter_system_group }}
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+Restart=on-failure
+RestartSec=20
+
+[Install]
+WantedBy=multi-user.target
